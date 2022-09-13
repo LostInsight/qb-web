@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - nightly-*
+  workflow_dispatch:
+    tags:
+      - manual-*
 
 jobs:
   build:

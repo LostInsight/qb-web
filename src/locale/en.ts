@@ -57,6 +57,7 @@ export default {
   untagged: 'Untagged',
   others: 'Others',
   sites: 'Sites',
+  savePath: 'Save Path',
   files: 'Files',
   less: 'Less',
   more: 'More',

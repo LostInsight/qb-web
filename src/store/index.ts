@@ -13,6 +13,7 @@ import searchEngineStore from './searchEngine';
 import { RootState } from './types';
 import stateMerge from '@/utils/vue-object-merge';
 import api from '@/Api';
+import { buildSavePlace } from '@/utils/save-place'
 
 Vue.use(Vuex);
 
@@ -90,6 +91,9 @@ const store = new Vuex.Store<RootState>({
       }
 
       return map(state.mainData.torrents, (value, key) => merge({}, value, { hash: key }));
+    },
+    torrentGroupBySavePath(__, getters) {
+      return buildSavePlace(getters.allTorrents);
     },
     allCategories(state) {
       if (!state.mainData) {
@@ -191,7 +195,7 @@ export function useStore() {
 }
 
 export function useMutations(mutations: [string], namespace?: string) {
-  const result: {[key: string]: () => any} = {};
+  const result: { [key: string]: () => any } = {};
 
   mutations.forEach((m) => {
     const method = namespace ? `${namespace}/${m}` : m;
@@ -204,7 +208,7 @@ export function useMutations(mutations: [string], namespace?: string) {
 export function useState(states: [string], namespace?: string) {
   const state = namespace ? (store.state as any)[namespace] : store.state;
 
-  const result: {[key: string]: Readonly<Ref<Readonly<any>>>} = {};
+  const result: { [key: string]: Readonly<Ref<Readonly<any>>> } = {};
 
   states.forEach((s) => {
     result[s] = computed(() => state[s]);

@@ -13,6 +13,7 @@ import searchEngineStore from './searchEngine';
 import { RootState } from './types';
 import stateMerge from '@/utils/vue-object-merge';
 import api from '@/Api';
+import { Torrent } from '@/types'
 import { buildSavePlace } from '@/utils/save-place'
 
 Vue.use(Vuex);
@@ -31,6 +32,7 @@ const store = new Vuex.Store<RootState>({
     preferences: null,
     pasteUrl: null,
     needAuth: false,
+    query: null,
   },
   mutations: {
     /* eslint-disable no-param-reassign */
@@ -73,6 +75,9 @@ const store = new Vuex.Store<RootState>({
     updateNeedAuth(state, payload) {
       state.needAuth = payload;
     },
+    setQuery(state, payload) {
+      state.query = payload;
+    },
     /* eslint-enable no-param-reassign */
   },
   getters: {
@@ -110,7 +115,8 @@ const store = new Vuex.Store<RootState>({
       }
 
       const finalTags: any[] = []
-      for (const tag of state.mainData.tags) {
+      const tags = state.mainData.tags ?? [];
+      for (const tag of tags) {
         finalTags.push({
           "key": tag,
           "name": tag,
@@ -122,11 +128,15 @@ const store = new Vuex.Store<RootState>({
       return groupBy(getters.allTorrents, torrent => torrent.category);
     },
     torrentGroupByTag(state, getters) {
-      const result: any = {}
+      const result: Record<string, Torrent[]> = {}
       for (const torrent of getters.allTorrents) {
-        const tags: any[] = torrent.tags.split(",");
+        if (!torrent.tags) {
+          continue;
+        }
+
+        const tags: string[] = torrent.tags.split(', ');
         tags.forEach(tag => {
-          let list: any[] = result[tag]
+          let list: Torrent[] = result[tag]
           if (!list) {
             list = []
             result[tag] = list;

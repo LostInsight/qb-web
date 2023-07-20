@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { sortBy, sumBy, defaultTo, isUndefined } from 'lodash';
+import { sortBy, sumBy, isUndefined } from 'lodash';
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
@@ -132,6 +132,14 @@ interface MenuChildrenItem extends MenuItem {
   append?: string;
 }
 
+function getTopDomain(host: string) {
+  const parts = host.split('.');
+  if (parts.length > 2) {
+    return parts.slice(-2).join('.');
+  }
+  return host;
+}
+
 @Component({
   components: {
     FilterGroup,
@@ -157,10 +165,10 @@ export default class Drawer extends Vue {
   endItems: MenuItem[] = [
     { icon: 'mdi-delta', title: tr('logs'), click: () => this.updateOptions('showLogs', true) },
     { icon: 'mdi-card-search-outline', title: tr('search'), click: () => this.updateOptions('showSearch', true) },
+    { icon: 'mdi-rss-box', title: 'RSS', click: () => this.updateOptions('showRss', true) },
   ]
 
   pcItems: MenuItem[] = [
-    { icon: 'mdi-rss-box', title: 'RSS', click: () => this.updateOptions('showRss', true) },
     { icon: 'mdi-cog-box', title: tr('settings'), click: () => this.updateOptions('showSettings', true) },
     { icon: 'mdi-history', title: tr('label.switch_to_old_ui'), click: this.switchUi },
   ]
@@ -241,9 +249,10 @@ export default class Drawer extends Vue {
   buildSiteGroup(): MenuChildrenItem[] {
     return sortBy(Object.entries(this.torrentGroupBySite).map(([key, value]) => {
       const size = formatSize(sumBy(value, 'size'));
-      const site = SiteMap[key];
+      const domain = getTopDomain(key);
+      const site = SiteMap[domain];
       const title = `${site ? site.name : (key || tr('others'))} (${value.length})`;
-      const icon = defaultTo(site ? site.icon : null, 'mdi-server');
+      const icon = site?.icon ?? 'mdi-server';
       const append = `[${size}]`;
       return {
         icon, title, key, append,

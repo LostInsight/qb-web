@@ -349,6 +349,9 @@ function getStateInfo(state: string) {
       filter(state, getters) {
         return getters.config.filter;
       },
+      query(state: any) {
+        return state.query;
+      },
     }),
   },
   filters: {
@@ -423,6 +426,7 @@ export default class Torrents extends Vue {
   torrentGroupByState!: {[state: string]: Torrent[]}
   torrentGroupBySavePath!: RootPath
   filter!: TorrentFilter
+  query!: string | null
 
   updateConfig!: (_: ConfigPayload) => void
   showSnackBar!: (_: SnackBarConfig) => void

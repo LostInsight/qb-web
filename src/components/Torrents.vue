@@ -208,6 +208,7 @@
                 {{ row.item.added_on | formatAsDuration }} ago
               </span>
             </td>
+            <td>{{ row.item.tracker }}</td>
           </tr>
         </template>
       </v-data-table>
@@ -401,6 +402,7 @@ export default class Torrents extends Vue {
     { text: tr('eta'), value: 'eta' },
     { text: tr('ratio'), value: 'ratio' },
     { text: tr('added_on'), value: 'added_on' },
+    { text: tr('Tracker'), value: 'tracker' },
   ]
 
   readonly footerProps = {
